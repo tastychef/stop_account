@@ -13,10 +13,11 @@ from config import EMAIL, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID  # Импорти
 
 # Настройки OAuth
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
-CLIENT_SECRETS_FILE = "credentials.json"
+CLIENT_SECRETS_FILE = "client_secret.json"
 
 # Инициализация Telegram бота
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+
 
 def get_gmail_service():
     creds = None
@@ -32,6 +33,7 @@ def get_gmail_service():
             token.write(creds.to_json())
 
     return build('gmail', 'v1', credentials=creds)
+
 
 def check_emails():
     try:
@@ -89,8 +91,12 @@ def check_emails():
         print(error_message)
         bot.send_message(TELEGRAM_CHAT_ID, error_message)
 
+
 def main():
+    # Проверка на наличие переменной PORT для Render.com
+    port = os.getenv('PORT', 5000)  # Используем значение по умолчанию 5000, если PORT не установлен
     print("Бот запущен. Проверка почты каждые 15 секунд...")
+
     try:
         bot.send_message(TELEGRAM_CHAT_ID, "Бот запущен и готов к работе")
         print("Тестовое сообщение отправлено в Telegram")
@@ -103,6 +109,7 @@ def main():
         except Exception as e:
             print(f"Ошибка в главном цикле: {e}")
         time.sleep(15)  # Проверка каждые 15 секунд
+
 
 if __name__ == "__main__":
     main()
